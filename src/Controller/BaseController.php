@@ -4,6 +4,12 @@ namespace Donchev\Framework\Controller;
 
 use DI\Annotation\Inject;
 use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 abstract class BaseController
 {
@@ -13,13 +19,48 @@ abstract class BaseController
      */
     private $container;
 
+    /**
+     * @Inject
+     * @var Environment
+     */
+    private $template;
+
+    /**
+     * @param string $templateName
+     * @param array $parameters
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function renderTemplate(string $templateName, array $parameters = [])
+    {
+        echo $this->template->render($templateName, $parameters);
+    }
+
+    /**
+     * @param string $name
+     * @return array
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    public function getSettings(string $name)
+    {
+        return $this->container->get('settings')[$name];
+    }
+
+    /**
+     * @return Container
+     */
     public function getContainer(): Container
     {
         return $this->container;
     }
 
-    public function getSettings(string $name)
+    /**
+     * @return Environment
+     */
+    public function getTemplate(): Environment
     {
-        return $this->container->get('settings')[$name];
+        return $this->template;
     }
 }

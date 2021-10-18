@@ -6,7 +6,6 @@ class HomeController extends BaseController
 {
     public function index()
     {
-        var_dump($this->getSettings('env'));
-        var_dump('Hello!');
+        $this->renderTemplate('home/index.html.twig');
     }
 }
