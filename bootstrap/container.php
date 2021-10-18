@@ -8,7 +8,7 @@ return function (array $settings) {
     $builder = new ContainerBuilder();
 
     if ($settings['env'] === 'prod') {
-        $builder->enableCompilation(__DIR__ . '/../cache/container.php');
+        $builder->enableCompilation(__DIR__ . '/../cache/container');
     }
 
     $fileLogger = new FileLogger(dirname(__DIR__) . '/logs/application.log');
