@@ -2,13 +2,11 @@
 
 namespace Donchev\Framework\Controller;
 
-use Psr\Log\LoggerInterface;
-
-class HomeController
+class HomeController extends BaseController
 {
-    public function index(LoggerInterface $logger)
+    public function index()
     {
-        $logger->info('test');
+        var_dump($this->getSettings('env'));
         var_dump('Hello!');
     }
 }
