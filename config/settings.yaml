@@ -1,2 +1,7 @@
-env: dev
-test: 123
+app.env: dev
+
+mail.host:
+mail.username:
+mail.password:
+mail.secure:
+mail.port:

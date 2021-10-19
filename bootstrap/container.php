@@ -1,7 +1,10 @@
 <?php
 
+use DI\Container;
 use DI\ContainerBuilder;
 use Donchev\Log\Loggers\FileLogger;
+use Nette\Mail\Mailer;
+use Nette\Mail\SmtpMailer;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -23,14 +26,26 @@ return function (array $settings) {
                 dirname(__DIR__) . '/logs/application.log'
             ),
 
-            Environment::class => function (ContainerInterface $container) {
+            Environment::class => DI\factory(function (ContainerInterface $container) {
                 $loader = new Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 
                 $options = $container->get('app.settings')['env'] === 'prod'
                     ? ['cache' => dirname(__DIR__) . '/cache/twig'] : [];
 
                 return new Environment($loader, $options);
-            },
+            }),
+
+            Mailer::class => DI\factory(function (Container $container) {
+                return new SmtpMailer(
+                    [
+                        'host' => $container->get('app.settings')['mail.host'],
+                        'username' => $container->get('app.settings')['mail.username'],
+                        'password' => $container->get('app.settings')['mail.password'],
+                        'secure' => $container->get('app.settings')['mail.secure'],
+                        'port' => $container->get('app.settings')['mail.port']
+                    ]
+                );
+            }),
 
             CacheInterface::class => DI\create(FilesystemAdapter::class)
                 ->constructor('', 0, dirname(__DIR__) . '/cache/filesystem'),

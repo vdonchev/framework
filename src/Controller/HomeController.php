@@ -2,15 +2,19 @@
 
 namespace Donchev\Framework\Controller;
 
+use Nette\Mail\Mailer;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class HomeController extends BaseController
 {
-    public function index(LoggerInterface $logger)
+    public function index(LoggerInterface $logger )
     {
         $logger->info(123);
+
+        //var_dump($mailer);
+
         /** @var CacheInterface $cache */
         $cache = $this->getCacheAdapter();
 
@@ -20,6 +24,6 @@ class HomeController extends BaseController
             return 10 + rand(0, 10);
         });
 
-        $this->renderTemplate('home/index.html.twig', ['test' => $test]);
+       $this->renderTemplate('home/index.html.twig', ['test' => $test]);
     }
 }

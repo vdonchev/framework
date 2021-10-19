@@ -20,22 +20,20 @@ abstract class BaseController
      */
     private $container;
 
-    /**
-     * @Inject
-     * @var Environment
-     */
     private $template;
 
     /**
      * @param string $templateName
      * @param array $parameters
+     * @throws DependencyException
      * @throws LoaderError
+     * @throws NotFoundException
      * @throws RuntimeError
      * @throws SyntaxError
      */
     public function renderTemplate(string $templateName, array $parameters = [])
     {
-        echo $this->template->render($templateName, $parameters);
+        echo $this->getTemplate()->render($templateName, $parameters);
     }
 
     /**
@@ -64,9 +62,15 @@ abstract class BaseController
 
     /**
      * @return Environment
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     public function getTemplate(): Environment
     {
+        if (!$this->template) {
+            $this->template = $this->container->get(Environment::class);
+        }
+
         return $this->template;
     }
 }
