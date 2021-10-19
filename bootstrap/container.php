@@ -4,6 +4,8 @@ use DI\ContainerBuilder;
 use Donchev\Log\Loggers\FileLogger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Environment;
 
 return function (array $settings) {
@@ -15,7 +17,6 @@ return function (array $settings) {
         $builder->enableCompilation(__DIR__ . '/../cache/container');
     }
 
-
     $builder->addDefinitions(
         [
             LoggerInterface::class => DI\create(FileLogger::class)->constructor(
@@ -25,13 +26,18 @@ return function (array $settings) {
             Environment::class => function (ContainerInterface $container) {
                 $loader = new Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 
-                $options = $container->get('settings')['env'] === 'prod'
+                $options = $container->get('app.settings')['env'] === 'prod'
                     ? ['cache' => dirname(__DIR__) . '/cache/twig'] : [];
 
                 return new Environment($loader, $options);
             },
 
-            'settings' => $settings
+            CacheInterface::class => DI\create(FilesystemAdapter::class)
+                ->constructor('', 0, dirname(__DIR__, 2) . '/cache/filesystem'),
+
+            'app.cache' => DI\get(CacheInterface::class),
+
+            'app.settings' => $settings
         ]
     );
 

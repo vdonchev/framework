@@ -6,6 +6,7 @@ use DI\Annotation\Inject;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -45,7 +46,12 @@ abstract class BaseController
      */
     public function getSettings(string $name)
     {
-        return $this->container->get('settings')[$name];
+        return $this->container->get('app.settings')[$name];
+    }
+
+    public function getCacheAdapter(): AdapterInterface
+    {
+        return $this->container->get('app.cache');
     }
 
     /**
