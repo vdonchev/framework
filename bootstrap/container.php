@@ -33,7 +33,7 @@ return function (array $settings) {
             },
 
             CacheInterface::class => DI\create(FilesystemAdapter::class)
-                ->constructor('', 0, dirname(__DIR__, 2) . '/cache/filesystem'),
+                ->constructor('', 0, dirname(__DIR__) . '/cache/filesystem'),
 
             'app.cache' => DI\get(CacheInterface::class),
 

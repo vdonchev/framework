@@ -3,12 +3,14 @@
 namespace Donchev\Framework\Controller;
 
 use Psr\Cache\CacheItemInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class HomeController extends BaseController
 {
-    public function index()
+    public function index(LoggerInterface $logger)
     {
+        $logger->info(123);
         /** @var CacheInterface $cache */
         $cache = $this->getCacheAdapter();
 
