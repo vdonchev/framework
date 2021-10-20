@@ -3,5 +3,5 @@
 use Donchev\Framework\Controller\HomeController;
 
 return [
-    ['GET', '/', [HomeController::class, 'index']]
+    ['GET', '/', [HomeController::class, 'index']],
 ];
