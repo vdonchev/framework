@@ -2,5 +2,7 @@
 /vendor
 /config/settings.local.yaml
 *.log
-/var/**
-!/var/.gitkleep
+/var/log/**
+!/var/log/.gitkeep
+/var/cache/**
+!/var/cache/.gitkeep
