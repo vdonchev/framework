@@ -16,7 +16,7 @@ $dispatcher = FastRoute\cachedDispatcher(
         $routeImporter(require_once dirname(__DIR__) . '/config/routes.php', $routeCollector);
     },
     [
-        'cacheFile' => dirname(__DIR__) . '/cache/route.cache',
+        'cacheFile' => dirname(__DIR__) . '/var/cache/route.cache',
         'cacheDisabled' => $container->get('app.settings')['app.env'] !== 'prod',
     ]
 );

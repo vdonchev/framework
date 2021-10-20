@@ -17,20 +17,20 @@ return function (array $settings) {
     $builder->useAnnotations(true);
 
     if ($settings['app.env'] === 'prod') {
-        $builder->enableCompilation(__DIR__ . '/../cache/container');
+        $builder->enableCompilation(__DIR__ . '/../var/cache/container');
     }
 
     $builder->addDefinitions(
         [
             LoggerInterface::class => DI\create(FileLogger::class)->constructor(
-                dirname(__DIR__) . '/logs/application.log'
+                dirname(__DIR__) . '/var/log/application.log'
             ),
 
             Environment::class => DI\factory(function (ContainerInterface $container) {
                 $loader = new Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 
                 $options = $container->get('app.settings')['app.env'] === 'prod'
-                    ? ['cache' => dirname(__DIR__) . '/cache/twig'] : [];
+                    ? ['cache' => dirname(__DIR__) . '/var/cache/twig'] : [];
 
                 return new Environment($loader, $options);
             }),
@@ -57,10 +57,8 @@ return function (array $settings) {
                 );
             }),
 
-            'db.main' => DI\get(MeekroDB::class),
-
             CacheInterface::class => DI\create(FilesystemAdapter::class)
-                ->constructor('', 0, dirname(__DIR__) . '/cache/filesystem'),
+                ->constructor('', 0, dirname(__DIR__) . '/var/cache/filesystem'),
 
             'app.cache' => DI\get(CacheInterface::class),
 
