@@ -47,12 +47,24 @@ return function (array $settings) {
                 );
             }),
 
+            MeekroDB::class => DI\factory(function (Container $container) {
+                return new MeekroDB(
+                    $container->get('app.settings')['db.host'],
+                    $container->get('app.settings')['db.username'],
+                    $container->get('app.settings')['db.password'],
+                    $container->get('app.settings')['db.name'],
+                    $container->get('app.settings')['db.port']
+                );
+            }),
+
+            'db.main' => DI\get(MeekroDB::class),
+
             CacheInterface::class => DI\create(FilesystemAdapter::class)
                 ->constructor('', 0, dirname(__DIR__) . '/cache/filesystem'),
 
             'app.cache' => DI\get(CacheInterface::class),
 
-            'app.settings' => $settings
+            'app.settings' => $settings,
         ]
     );
 

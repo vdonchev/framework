@@ -2,21 +2,19 @@
 
 namespace Donchev\Framework\Controller;
 
-use DB;
+use MeekroDB;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class HomeController extends BaseController
 {
-    public function index(LoggerInterface $logger)
+    public function index(LoggerInterface $logger, MeekroDB $db)
     {
-        $res = DB::query('SELECT * FROM dz_users');
-        var_dump($res);
+        $users = $db->query("SELECT * FROM dz_users");
+        var_dump($users);
 
         $logger->info(123);
-
-        //var_dump($mailer);
 
         /** @var CacheInterface $cache */
         $cache = $this->getCacheAdapter();
