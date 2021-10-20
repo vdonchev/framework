@@ -7,7 +7,10 @@ $settings = require_once dirname(__DIR__) . '/bootstrap/settings.php';
 $containerBuilder = require_once dirname(__DIR__) . '/bootstrap/container.php';
 $container = $containerBuilder($settings);
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routeCollector) {
+$db = require_once dirname(__DIR__) . '/bootstrap/db.php';
+$db($container);
+
+$dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $routeCollector) {
     $routeImporter = require_once dirname(__DIR__) . '/bootstrap/router.php';
     $routeImporter(require_once dirname(__DIR__) . '/config/routes.php', $routeCollector);
 });

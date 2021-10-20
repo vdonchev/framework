@@ -16,7 +16,7 @@ return function (array $settings) {
 
     $builder->useAnnotations(true);
 
-    if ($settings['env'] === 'prod') {
+    if ($settings['app.env'] === 'prod') {
         $builder->enableCompilation(__DIR__ . '/../cache/container');
     }
 
@@ -29,7 +29,7 @@ return function (array $settings) {
             Environment::class => DI\factory(function (ContainerInterface $container) {
                 $loader = new Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 
-                $options = $container->get('app.settings')['env'] === 'prod'
+                $options = $container->get('app.settings')['app.env'] === 'prod'
                     ? ['cache' => dirname(__DIR__) . '/cache/twig'] : [];
 
                 return new Environment($loader, $options);
