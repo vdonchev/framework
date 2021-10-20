@@ -11,8 +11,8 @@ class HomeController extends BaseController
 {
     public function index(LoggerInterface $logger, MeekroDB $db)
     {
-        $users = $db->query("SELECT * FROM dz_users");
-        var_dump($users);
+//        $users = $db->query("SELECT * FROM dz_users");
+//        var_dump($users);
 
         $logger->info(123);
 

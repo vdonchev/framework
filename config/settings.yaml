@@ -1,8 +1,10 @@
 app.env: dev
 
+db.host:
 db.name:
 db.username:
 db.password:
+db.port:
 
 mail.host:
 mail.username:

@@ -1,16 +1,27 @@
 <?php
 
+use DI\Container;
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 $settings = require_once dirname(__DIR__) . '/bootstrap/settings.php';
 
 $containerBuilder = require_once dirname(__DIR__) . '/bootstrap/container.php';
+/** @var Container $container */
 $container = $containerBuilder($settings);
 
-$dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $routeCollector) {
-    $routeImporter = require_once dirname(__DIR__) . '/bootstrap/router.php';
-    $routeImporter(require_once dirname(__DIR__) . '/config/routes.php', $routeCollector);
-});
+$dispatcher = FastRoute\cachedDispatcher(
+    function (FastRoute\RouteCollector $routeCollector) {
+        $routeImporter = require_once dirname(__DIR__) . '/bootstrap/router.php';
+        $routeImporter(require_once dirname(__DIR__) . '/config/routes.php', $routeCollector);
+    },
+    [
+        'cacheFile' => dirname(__DIR__) . '/cache/route.cache',
+        'cacheDisabled' => $container->get('app.settings')['app.env'] !== 'prod',
+    ]
+);
+
+var_dump($container->get('app.settings')['app.env']);
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
