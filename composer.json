@@ -1,5 +1,5 @@
 {
-    "name": "xclusive/framework.test",
+    "name": "xclusive/framework",
     "description": "simple framework",
     "type": "package",
     "license": "MIT",
@@ -11,7 +11,7 @@
     "authors": [
         {
             "name": "donchev",
-            "email": "info@videlin.eu"
+            "email": "mail@videl.in"
         }
     ],
     "require": {

@@ -20,6 +20,9 @@ abstract class BaseController
      */
     private $container;
 
+    /**
+     * @var Environment|null
+     */
     private $template;
 
     /**
@@ -38,16 +41,21 @@ abstract class BaseController
 
     /**
      * @param string $name
-     * @return array
+     * @return string
      * @throws DependencyException
      * @throws NotFoundException
      */
-    public function getSettings(string $name)
+    public function getSettings(string $name): string
     {
         return $this->container->get('app.settings')[$name];
     }
 
-    public function getCacheAdapter(): AdapterInterface
+    /**
+     * @return AdapterInterface
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    public function getCache(): AdapterInterface
     {
         return $this->container->get('app.cache');
     }
