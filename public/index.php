@@ -21,8 +21,6 @@ $dispatcher = FastRoute\cachedDispatcher(
     ]
 );
 
-var_dump($container->get('app.settings')['app.env']);
-
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
 if (false !== $pos = strpos($uri, '?')) {

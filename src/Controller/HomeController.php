@@ -2,29 +2,23 @@
 
 namespace Donchev\Framework\Controller;
 
-use MeekroDB;
-use Psr\Cache\CacheItemInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Cache\CacheInterface;
+use DI\DependencyException;
+use DI\NotFoundException;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class HomeController extends BaseController
 {
-    public function index(LoggerInterface $logger, MeekroDB $db)
+    /**
+     * @throws DependencyException
+     * @throws NotFoundException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function index()
     {
-//        $users = $db->query("SELECT * FROM dz_users");
-//        var_dump($users);
-
-        $logger->info(123);
-
-        /** @var CacheInterface $cache */
-        $cache = $this->getCacheAdapter();
-
-        $test = $cache->get('test', function (CacheItemInterface $item) {
-            $item->expiresAfter(5);
-
-            return 10 + rand(0, 10);
-        });
-
-        $this->renderTemplate('home/index.html.twig', ['test' => $test]);
+        $this->renderTemplate('home/index.html.twig');
     }
 }
