@@ -1,6 +1,7 @@
 <?php
 
 use DI\Container;
+use Psr\Log\LoggerInterface;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -41,6 +42,11 @@ switch ($routeInfo[0]) {
         $handler = $routeInfo[1];
         $parameters = $routeInfo[2];
 
-        $container->call($handler, $parameters);
+        try {
+            $container->call($handler, $parameters);
+        } catch (Exception $exception) {
+            $container->get(LoggerInterface::class)->error($exception->getMessage());
+        }
+
         break;
 }

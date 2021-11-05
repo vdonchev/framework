@@ -1,6 +1,6 @@
 <?php
 
-namespace Donchev\Framework\Controller;
+namespace Donchev\Framework\Controller\Web;
 
 use DI\Annotation\Inject;
 use DI\Container;
