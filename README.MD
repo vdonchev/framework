@@ -8,3 +8,5 @@
 - Console Commands
 - Cache
 - Log
+### Installation:
+`composer create-project donchev/framework`
