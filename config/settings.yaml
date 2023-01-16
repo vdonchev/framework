@@ -5,6 +5,7 @@ db.name:
 db.username:
 db.password:
 db.port:
+db.encoding:
 
 mail.host:
 mail.username:

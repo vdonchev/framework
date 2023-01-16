@@ -53,7 +53,8 @@ return function (array $settings) {
                     $container->get('app.settings')['db.username'],
                     $container->get('app.settings')['db.password'],
                     $container->get('app.settings')['db.name'],
-                    $container->get('app.settings')['db.port']
+                    $container->get('app.settings')['db.port'],
+                    $container->get('app.settings')['db.encoding']
                 );
             }),
 
