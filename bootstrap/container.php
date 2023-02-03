@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Environment;
+use Twig\Extension\DebugExtension;
 
 return function (array $settings) {
     $builder = new ContainerBuilder();
@@ -32,7 +33,17 @@ return function (array $settings) {
                 $options = $container->get('app.settings')['app.env'] === 'prod'
                     ? ['cache' => dirname(__DIR__) . '/var/cache/twig'] : [];
 
-                return new Environment($loader, $options);
+                if ($container->get('app.settings')['app.env'] === 'dev') {
+                    $options['debug'] = true;
+                }
+
+                $twig = new Environment($loader, $options);
+
+                if ($container->get('app.settings')['app.env'] === 'dev') {
+                    $twig->addExtension(new DebugExtension());
+                }
+
+                return $twig;
             }),
 
             Mailer::class => DI\factory(function (Container $container) {
