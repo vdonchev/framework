@@ -1,4 +1,6 @@
 app.env: dev
+app.name:
+app.url:
 
 db.host:
 db.name:
@@ -12,3 +14,5 @@ mail.username:
 mail.password:
 mail.secure:
 mail.port:
+mail.from.name:
+mail.from.email:

@@ -43,6 +43,11 @@ return function (array $settings) {
                     $twig->addExtension(new DebugExtension());
                 }
 
+                $twig->addGlobal('http_get', $_GET);
+                $twig->addGlobal('http_post', $_POST);
+                $twig->addGlobal('http_session', $_SESSION);
+                $twig->addGlobal('http_cookie', $_COOKIE);
+
                 return $twig;
             }),
 
