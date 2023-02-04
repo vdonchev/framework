@@ -14,6 +14,11 @@ class Session
         $_SESSION[$key] = $value;
     }
 
+    public static function isSet(string $key): bool
+    {
+        return isset($_SESSION[$key]);
+    }
+
     public static function unset(string $key)
     {
         unset($_SESSION[$key]);
