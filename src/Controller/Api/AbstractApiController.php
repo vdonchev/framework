@@ -2,10 +2,10 @@
 
 namespace Donchev\Framework\Controller\Api;
 
-use Donchev\Framework\Controller\Web\BaseController;
+use Donchev\Framework\Controller\Web\AbstractController;
 use Donchev\Framework\Exception\AppException;
 
-abstract class BaseApiController extends BaseController
+abstract class AbstractApiController extends AbstractController
 {
     /**
      * @throws AppException

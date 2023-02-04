@@ -1,0 +1,24 @@
+{% if flashes is not empty %}
+
+    <div class="row">
+        <div class="col-12">
+
+            {% for name, group in flashes %}
+                {% for flash in group %}
+                    <div class="alert alert-dismissible fade show alert-{{ name }}" role="alert">
+                        {{ flash }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            $('.alert-success, .alert-info').alert('close');
+        }, 2500);
+    </script>
+
+{% endif %}
