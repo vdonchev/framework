@@ -5,9 +5,12 @@ use Psr\Log\LoggerInterface;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+session_start();
+
 $settings = require_once dirname(__DIR__) . '/bootstrap/settings.php';
 
 $containerBuilder = require_once dirname(__DIR__) . '/bootstrap/container.php';
+
 /** @var Container $container */
 $container = $containerBuilder($settings);
 
