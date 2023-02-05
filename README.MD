@@ -3,6 +3,7 @@
 - DI Container
 - Routing
 - Templates
+- Flash Messages
 - Database
 - SMTP Mailer
 - Console Commands
