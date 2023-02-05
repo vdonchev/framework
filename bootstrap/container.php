@@ -2,6 +2,8 @@
 
 use DI\Container;
 use DI\ContainerBuilder;
+use Donchev\Framework\Flash\FlashService;
+use Donchev\Framework\Twig\TwigFunctions;
 use Donchev\Log\Loggers\FileLogger;
 use Nette\Mail\Mailer;
 use Nette\Mail\SmtpMailer;
@@ -11,6 +13,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
+use Twig\TwigFunction;
 
 return function (array $settings) {
     $builder = new ContainerBuilder();
@@ -47,6 +50,12 @@ return function (array $settings) {
                 $twig->addGlobal('http_post', $_POST);
                 $twig->addGlobal('http_session', $_SESSION);
                 $twig->addGlobal('http_cookie', $_COOKIE);
+
+                $flash = new FlashService();
+                $f = new TwigFunctions($flash);
+                $twigFunction = new TwigFunction('get_flash', [$f, 'getFlashes']);
+
+                $twig->addFunction($twigFunction);
 
                 return $twig;
             }),

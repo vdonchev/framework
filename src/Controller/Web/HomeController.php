@@ -9,7 +9,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class HomeController extends BaseController
+class HomeController extends AbstractController
 {
     /**
      * @throws DependencyException
