@@ -13,22 +13,22 @@ class FlashService
     private const WARNING = 'warning';
     private const ERROR = 'danger';
 
-    public function addInfo(string $content)
+    public function addInfo($content)
     {
         $this->addFlash(self::INFO, $content);
     }
 
-    public function addSuccess(string $content)
+    public function addSuccess($content)
     {
         $this->addFlash(self::SUCCESS, $content);
     }
 
-    public function addWarning(string $content)
+    public function addWarning($content)
     {
         $this->addFlash(self::WARNING, $content);
     }
 
-    public function addError(string $content)
+    public function addError($content)
     {
         $this->addFlash(self::ERROR, $content);
     }
@@ -45,7 +45,7 @@ class FlashService
         return $flash;
     }
 
-    private function addFlash(string $type, string $content)
+    private function addFlash(string $type, $content)
     {
         $flash = Session::get(self::FLASH_KEY);
 

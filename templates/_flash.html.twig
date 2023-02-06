@@ -8,7 +8,14 @@
             {% for name, group in flashes %}
                 {% for flash in group %}
                     <div class="alert alert-dismissible fade show alert-{{ name }}" role="alert">
-                        {{ flash }}
+                        {% if flash is iterable %}
+                            <ul class="flash-list">
+                                <li>{{ flash|join('<li>')|raw }}</li>
+                            </ul>
+
+                        {% else %}
+                            {{ flash }}
+                        {% endif %}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
@@ -16,6 +23,12 @@
 
         </div>
     </div>
+
+    <style>
+        .flash-list {
+            margin-bottom: 0 !important;
+        }
+    </style>
 
     <script>
         setTimeout(function () {
