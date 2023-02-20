@@ -4,6 +4,11 @@ namespace Donchev\Framework\Http;
 
 class Post
 {
+    public static function getAll()
+    {
+        return $_POST;
+    }
+
     public static function get(string $key)
     {
         return $_POST[$key] ?? null;

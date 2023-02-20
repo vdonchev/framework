@@ -4,6 +4,11 @@ namespace Donchev\Framework\Http;
 
 class Get
 {
+    public static function getAll()
+    {
+        return $_GET;
+    }
+
     public static function get(string $key)
     {
         return $_GET[$key] ?? null;

@@ -20,10 +20,19 @@ class HomeController extends AbstractController
      */
     public function index(FlashService $flashService)
     {
-        $flashService->addInfo('info');
-        $flashService->addSuccess('success');
-        $flashService->addError('error');
-        $flashService->addWarning('warning');
+        $data = [
+            'firstname' => '',
+            'username' => 'bob',
+            'address' => 'This is my address',
+            'zipcode' => '999',
+            'email' => 'jo@',
+            'password' => 'test23',
+            'password2' => 'test123',
+            'age' => 60,
+            'ip' => '213.214.65.21',
+            'Facebook URL' => 'facebook.com',
+            'favorite' => 6,
+        ];
 
         $this->renderTemplate('home/index.html.twig');
     }

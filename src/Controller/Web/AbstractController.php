@@ -81,4 +81,14 @@ abstract class AbstractController
 
         return $this->template;
     }
+
+    /**
+     * @param string $url
+     * @return void
+     */
+    public function redirect(string $url)
+    {
+        header("Location: {$url}");
+        exit();
+    }
 }
