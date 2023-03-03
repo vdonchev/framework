@@ -12,10 +12,14 @@ class DataValidator
         'min' => 'The %s must have at least %s characters',
         'max' => 'The %s must have at most %s characters',
         'between' => 'The %s must have between %d and %d characters',
-        'integer' => 'The %s must be an integer',
-        'numberMin' => 'The %s must be at least %s ot bigger',
-        'numberMax' => 'The %s must be at most %s or bellow',
-        'numberBetween' => 'The %s must be between %d and %d',
+        'number' => 'The %s must be an integer',
+        'number_min' => 'The %s must be at least %d or bigger',
+        'number_max' => 'The %s must be at most %d or bellow',
+        'number_between' => 'The %s must be between %d and %d',
+        'float' => 'The %s must be a floating point number',
+        'float_min' => 'The %s must be at least %f or bigger',
+        'float_max' => 'The %s must be at most %f or bellow',
+        'float_between' => 'The %s must be between %f and %f',
         'same' => 'The %s must match with %s',
         'alphanumeric' => 'The %s should have only letters and numbers',
         'secure' => 'The %s must have between 8 and 64 characters and contain at least one number, one upper case letter, one lower case letter and one special character',
@@ -63,7 +67,14 @@ class DataValidator
                     $rule = trim($ruleData);
                 }
 
-                $callable = 'is' . ucfirst($rule);
+                $methodName = $rule;
+                if (preg_match_all('/_([a-z])/', $methodName, $matches)) {
+                    for ($i = 0; $i < count($matches[0]); $i++) {
+                        $methodName = str_replace($matches[0][$i], strtoupper($matches[1][$i]), $methodName);
+                    }
+                }
+
+                $callable = 'is' . ucfirst($methodName);
                 if (is_callable([$this, $callable])) {
                     if (!$this->$callable($data, $field, ...$parameters)) {
                         $error = $this->getError($field, $rule);
@@ -148,6 +159,42 @@ class DataValidator
         return $data[$field] >= $min && $data[$field] <= $max;
     }
 
+    public function isFloat(array $data, string $field): bool
+    {
+        if (!isset($data[$field])) {
+            return true;
+        }
+
+        return filter_var($data[$field], FILTER_VALIDATE_FLOAT);
+    }
+
+    public function isFloatMin(array $data, string $field, float $min): bool
+    {
+        if (!isset($data[$field])) {
+            return true;
+        }
+
+        return $data[$field] >= $min;
+    }
+
+    public function isFloatMax(array $data, string $field, float $max): bool
+    {
+        if (!isset($data[$field])) {
+            return true;
+        }
+
+        return $data[$field] <= $max;
+    }
+
+    public function isFloatBetween(array $data, string $field, float $min, float $max): bool
+    {
+        if (!isset($data[$field])) {
+            return true;
+        }
+
+        return $data[$field] >= $min && $data[$field] <= $max;
+    }
+
     public function isRequired(array $data, string $field): bool
     {
         return isset($data[$field]) && trim($data[$field]) !== '';
@@ -220,11 +267,5 @@ class DataValidator
 
         $pattern = "#.*^(?=.{8,64})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$#";
         return preg_match($pattern, $data[$field]);
-    }
-
-    public function isUnique(array $data, string $field, string $table, string $column): bool
-    {
-        // todo
-        return true;
     }
 }
