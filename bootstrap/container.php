@@ -9,7 +9,9 @@ use Nette\Mail\Mailer;
 use Nette\Mail\SmtpMailer;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
@@ -83,8 +85,19 @@ return function (array $settings) {
                 );
             }),
 
-            CacheInterface::class => DI\create(FilesystemAdapter::class)
-                ->constructor('', 0, dirname(__DIR__) . '/var/cache/filesystem'),
+            CacheInterface::class => DI\factory(function (Container $container) {
+                if ($container->get('app.settings')['app.env'] === 'dev') {
+                    return new TagAwareAdapter(
+                        new ArrayAdapter(),
+                        new ArrayAdapter()
+                    );
+                }
+
+                return new TagAwareAdapter(
+                    new FilesystemAdapter('', 0, dirname(__DIR__) . '/var/cache/filesystem'),
+                    new FilesystemAdapter('', 0, dirname(__DIR__) . '/var/cache/filesystem/tags')
+                );
+            }),
 
             'app.cache' => DI\get(CacheInterface::class),
 
