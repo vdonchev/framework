@@ -13,6 +13,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\TwigFunction;
@@ -85,18 +86,22 @@ return function (array $settings) {
                 );
             }),
 
-            CacheInterface::class => DI\factory(function (Container $container) {
+            TagAwareCacheInterface::class => DI\factory(function (Container $container) {
                 if ($container->get('app.settings')['app.env'] === 'dev') {
-                    return new TagAwareAdapter(
-                        new ArrayAdapter(),
-                        new ArrayAdapter()
-                    );
+                    return new TagAwareAdapter(new ArrayAdapter());
                 }
 
                 return new TagAwareAdapter(
-                    new FilesystemAdapter('', 0, dirname(__DIR__) . '/var/cache/filesystem'),
-                    new FilesystemAdapter('', 0, dirname(__DIR__) . '/var/cache/filesystem/tags')
+                    new FilesystemAdapter('', 0, dirname(__DIR__) . '/var/cache/filesystem')
                 );
+            }),
+
+            CacheInterface::class => DI\factory(function (Container $container) {
+                if ($container->get('app.settings')['app.env'] === 'dev') {
+                    return new ArrayAdapter();
+                }
+
+                return new FilesystemAdapter('', 0, dirname(__DIR__) . '/var/cache/filesystem');
             }),
 
             'app.cache' => DI\get(CacheInterface::class),
