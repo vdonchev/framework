@@ -67,7 +67,7 @@ class Cookie
 
             foreach ($defaultOptions as $optionKey => $optionValue) {
                 if (!array_key_exists($optionKey, $options)) {
-                    $options[$optionKey] = $defaultOptions[$optionValue];
+                    $options[$optionKey] = $optionValue;
                 }
             }
 
@@ -102,7 +102,7 @@ class Cookie
         if (!headers_sent()) {
             foreach ($defaultOptions as $optionKey => $optionValue) {
                 if (!array_key_exists($optionKey, $options)) {
-                    $options[$optionKey] = $defaultOptions[$optionValue];
+                    $options[$optionKey] = $optionValue;
                 }
             }
 
