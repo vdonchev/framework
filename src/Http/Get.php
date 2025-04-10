@@ -1,59 +1,84 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Donchev\Framework\Http;
 
 class Get
 {
-    public static function getAll(bool $trim = true)
+    private array $getData;
+
+    public function __construct()
     {
-        if ($trim === true) {
-            return filter_var($_GET, FILTER_CALLBACK, ['options' => 'trim']);
+        $this->getData = filter_input_array(INPUT_GET, FILTER_UNSAFE_RAW) ?? [];
+    }
+
+    /**
+     * @param string $key
+     * @param bool $trim
+     * @return mixed
+     */
+    public function get(string $key, bool $trim = true): mixed
+    {
+        $value = $this->getData[$key] ?? null;
+
+        if ($trim && is_string($value)) {
+            return trim($value);
         }
 
-        return $_GET;
+        return $value;
     }
 
-    public static function get(string $key, bool $trim = true)
+    /**
+     * @param bool $trim
+     * @return array
+     */
+    public function getAll(bool $trim = true): array
     {
-        if (isset($_GET[$key])) {
-            if ($trim === true) {
-                return filter_var($_GET[$key], FILTER_CALLBACK, ['options' => 'trim']);
-            }
-
-            return $_GET[$key];
+        if ($trim) {
+            array_walk_recursive($this->getData, function (&$value) {
+                if (is_string($value)) {
+                    $value = trim($value);
+                }
+            });
         }
 
-        return null;
+        return $this->getData;
     }
 
-    public static function exist(string $key): bool
+    /**
+     * @return array
+     */
+    public function keys(): array
     {
-        return isset($_GET[$key]);
+        return array_keys($this->getData);
     }
 
-    public static function exists(array $keys): bool
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function has(string $key): bool
     {
-        foreach ($keys as $key) {
-            if (!isset($_GET[$key])) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_key_exists($key, $this->getData);
     }
 
-    public static function empty(string $key): bool
+    /**
+     * @param array $keys
+     * @return bool
+     */
+    public function hasAll(array $keys): bool
     {
-        return isset($_GET[$key]) && empty($_GET[$key]);
+        return empty(array_diff_key(array_flip($keys), $this->getData));
     }
 
-    public static function unset(string $key): bool
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function isEmpty(string $key): bool
     {
-        if (isset($_GET[$key])) {
-            unset($_GET[$key]);
-            return true;
-        }
-
-        return false;
+        $value = $this->getData[$key] ?? null;
+        return empty($value);
     }
 }

@@ -1,25 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Donchev\Framework\Command;
 
-use DI\Container;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'cache:clear', description: 'Clears the cache')]
 class CacheClearCommand extends Command
 {
-    protected static $defaultName = 'cache:clear';
+    protected array $errors = [];
 
-    /**
-     * @var Container
-     */
-    private $container;
-
-    public function __construct(Container $container, string $name = null)
+    public function __construct(string $name = null)
     {
-        parent::__construct($name);
-        $this->container = $container;
+        parent::__construct($name ?? self::getDefaultName());
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -28,23 +25,34 @@ class CacheClearCommand extends Command
 
         $this->delete($path, $path);
 
-        $output->writeln('<fg=green>==> Cache cleared!</>');
+        if (!empty($this->errors)) {
+            $output->writeln('<fg=yellow>==> Cache partially cleared. Some files/directories could not be deleted:</>');
+            foreach ($this->errors as $error) {
+                $output->writeln("  <fg=red>- {$error}</>");
+            }
+        } else {
+            $output->writeln('<fg=green>==> Cache fully cleared!</>');
+        }
 
         return Command::SUCCESS;
     }
 
-    private function delete(string $dir, string $rootDir)
+    protected function delete(string $dir, string $rootDir): void
     {
-        foreach (glob($dir . '/*') as $file) {
+        foreach (glob($dir . '/*') ?: [] as $file) {
             if (is_dir($file)) {
                 $this->delete($file, $rootDir);
             } else {
-                unlink($file);
+                if (!@unlink($file)) {
+                    $this->errors[] = $file;
+                }
             }
         }
 
-        if ($dir != $rootDir) {
-            rmdir($dir);
+        if ($dir !== $rootDir && is_dir($dir)) {
+            if (!@rmdir($dir)) {
+                $this->errors[] = $dir;
+            }
         }
     }
 }

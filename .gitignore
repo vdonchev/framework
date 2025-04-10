@@ -1,4 +1,3 @@
-/.idea
 /vendor
 /config/settings.local.yaml
 *.log
@@ -6,3 +5,22 @@
 !/var/log/.gitkeep
 /var/cache/**
 !/var/cache/.gitkeep
+
+# IDE specific
+/.idea
+
+# Environment-specific config (if using dotenv)
+.env
+.env.*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# PHPUnit test results / coverage
+/phpunit.xml
+.phpunit.result.cache
+coverage/
+
+# CS Fixer
+.php-cs-fixer.cache

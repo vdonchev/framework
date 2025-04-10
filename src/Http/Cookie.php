@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Donchev\Framework\Http;
 
 class Cookie
 {
-    const DAY = 86400;
-    const WEEK = 604800;
-    const MONTH = 2592000;
-    const YEAR = 31536000;
+    public const DAY = 86400;
+    public const WEEK = 604800;
+    public const MONTH = 2592000;
+    public const YEAR = 31536000;
 
-    const DEFAULT_COOKIE_OPTIONS = [
+    public const DEFAULT_COOKIE_OPTIONS = [
         'expiry' => self::MONTH,
         'path' => '/',
-        'domain' => true,
+        'domain' => true, // true => auto-detect from HTTP_HOST
         'secure' => false,
         'httponly' => false,
         'remove_global' => true
@@ -40,88 +42,86 @@ class Cookie
 
     private static function calculate(int $amount, int $duration): int
     {
-        return ($duration * $amount);
+        return $duration * $amount;
     }
 
-    public static function exist(string $key): bool
+    public static function has(string $key): bool
     {
-        return (isset($_COOKIE[$key]));
+        return isset($_COOKIE[$key]);
     }
 
     public static function isEmpty(string $key): bool
     {
-        return (empty($_COOKIE[$key]));
+        return empty($_COOKIE[$key]);
     }
 
     public static function get(string $key): ?string
     {
-        return self::exist($key) ? $_COOKIE[$key] : null;
+        return self::has($key) ? $_COOKIE[$key] : null;
     }
 
-    public static function set(string $key, $value, $options = []): bool
+    public static function set(string $key, string $value, array $options = []): bool
     {
-        $set = false;
-
-        $defaultOptions = self::DEFAULT_COOKIE_OPTIONS;
-        if (!headers_sent()) {
-
-            foreach ($defaultOptions as $optionKey => $optionValue) {
-                if (!array_key_exists($optionKey, $options)) {
-                    $options[$optionKey] = $optionValue;
-                }
-            }
-
-            $options['domain'] = $options['domain'] === true ? '.' . $_SERVER['HTTP_HOST'] : '';
-            $options['expiry'] =
-                is_numeric($options['expiry']) ? $options['expiry'] += time() : strtotime($options['expiry']);
-
-            $set = setcookie(
-                $key,
-                $value,
-                $options['expiry'],
-                $options['path'],
-                $options['domain'],
-                $options['secure'],
-                $options['httponly']
-            );
-
-            if ($set) {
-                $_COOKIE[$key] = $value;
-            }
+        if (headers_sent()) {
+            return false;
         }
 
-        return $set;
+        $options = array_merge(self::DEFAULT_COOKIE_OPTIONS, $options);
+
+        // Handle domain: true => auto, null => don't set, string => use it
+        if ($options['domain'] === true) {
+            $options['domain'] = '.' . ($_SERVER['HTTP_HOST'] ?? '');
+        } elseif (empty($options['domain'])) {
+            $options['domain'] = '';
+        }
+
+        $options['expiry'] = is_numeric($options['expiry'])
+            ? time() + $options['expiry']
+            : strtotime($options['expiry']);
+
+        $success = setcookie(
+            $key,
+            $value,
+            $options['expiry'],
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httponly']
+        );
+
+        if ($success) {
+            $_COOKIE[$key] = $value;
+        }
+
+        return $success;
     }
 
-    public static function unset(string $key, $options = []): bool
+    public static function unset(string $key, array $options = []): bool
     {
-        $defaultOptions = self::DEFAULT_COOKIE_OPTIONS;
-
-        $unset = false;
-
-        if (!headers_sent()) {
-            foreach ($defaultOptions as $optionKey => $optionValue) {
-                if (!array_key_exists($optionKey, $options)) {
-                    $options[$optionKey] = $optionValue;
-                }
-            }
-
-            $options['domain'] = $options['domain'] === true ? '.' . $_SERVER['HTTP_HOST'] : '';
-
-            if ($options['remove_global']) {
-                unset($_COOKIE[$key]);
-            }
-
-            $unset = setcookie(
-                $key, '',
-                (time() - 3600),
-                $options['path'],
-                $options['domain'],
-                $options['secure'],
-                $options['httponly']
-            );
+        if (headers_sent()) {
+            return false;
         }
 
-        return $unset;
+        $options = array_merge(self::DEFAULT_COOKIE_OPTIONS, $options);
+
+        if ($options['domain'] === true) {
+            $options['domain'] = '.' . ($_SERVER['HTTP_HOST'] ?? '');
+        } elseif (empty($options['domain'])) {
+            $options['domain'] = '';
+        }
+
+        if (!empty($options['remove_global'])) {
+            unset($_COOKIE[$key]);
+        }
+
+        return setcookie(
+            $key,
+            '',
+            time() - 3600,
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httponly']
+        );
     }
 }

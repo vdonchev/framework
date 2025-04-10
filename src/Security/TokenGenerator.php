@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Donchev\Framework\Security;
 
 use Exception;

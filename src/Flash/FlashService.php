@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Donchev\Framework\Flash;
 
 use Donchev\Framework\Http\Session;
@@ -13,41 +15,65 @@ class FlashService
     private const WARNING = 'warning';
     private const ERROR = 'danger';
 
-    public function addInfo($content)
+    public function __construct(private Session $session)
     {
+    }
+
+    public function addInfo(string|array $content): void
+    {
+        if (is_array($content)) {
+            $this->addFlashes(self::INFO, $content);
+            return;
+        }
+
         $this->addFlash(self::INFO, $content);
     }
 
-    public function addSuccess($content)
+    public function addSuccess(string|array $content): void
     {
+        if (is_array($content)) {
+            $this->addFlashes(self::SUCCESS, $content);
+            return;
+        }
+
         $this->addFlash(self::SUCCESS, $content);
     }
 
-    public function addWarning($content)
+    public function addWarning(string|array $content): void
     {
+        if (is_array($content)) {
+            $this->addFlashes(self::WARNING, $content);
+            return;
+        }
+
         $this->addFlash(self::WARNING, $content);
     }
 
-    public function addError($content)
+    public function addError(string|array $content): void
     {
+        if (is_array($content)) {
+            $this->addFlashes(self::ERROR, $content);
+            return;
+        }
+
         $this->addFlash(self::ERROR, $content);
     }
 
-    public function getFlashes()
+    public function getFlashes(): array
     {
-        if (!Session::isSet(self::FLASH_KEY)) {
+        if (!$this->session->get(self::FLASH_KEY)) {
             return [];
         }
 
-        $flash = Session::get(self::FLASH_KEY);
-        Session::unset(self::FLASH_KEY);
+        $flash = $this->session->get(self::FLASH_KEY);
+        $this->session->remove(self::FLASH_KEY);
 
         return $flash;
     }
 
-    private function addFlash(string $type, $content)
+    private function addFlash(string $type, $content): void
     {
-        $flash = Session::get(self::FLASH_KEY);
+        $flash = $this->session->get(self::FLASH_KEY);
 
         if (!is_array($flash)) {
             $flash = [];
@@ -55,6 +81,11 @@ class FlashService
 
         $flash[$type][] = $content;
 
-        Session::set(self::FLASH_KEY, $flash);
+        $this->session->set(self::FLASH_KEY, $flash);
+    }
+
+    private function addFlashes(string $type, array $contents): void
+    {
+        array_map([$this, 'addFlash'], array_fill(0, count($contents), $type), $contents);
     }
 }

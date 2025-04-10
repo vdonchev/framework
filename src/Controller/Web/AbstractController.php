@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Donchev\Framework\Controller\Web;
 
-use DI\Annotation\Inject;
+use DI\Attribute\Inject;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
@@ -14,16 +16,10 @@ use Twig\Error\SyntaxError;
 
 abstract class AbstractController
 {
-    /**
-     * @Inject()
-     * @var Container
-     */
-    private $container;
+    #[Inject]
+    private Container $container;
 
-    /**
-     * @var Environment|null
-     */
-    private $template;
+    private ?Environment $template = null;
 
     /**
      * @param string $templateName
@@ -34,7 +30,7 @@ abstract class AbstractController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function renderTemplate(string $templateName, array $parameters = [])
+    public function renderTemplate(string $templateName, array $parameters = []): void
     {
         echo $this->getTemplate()->render($templateName, $parameters);
     }
@@ -75,7 +71,7 @@ abstract class AbstractController
      */
     public function getTemplate(): Environment
     {
-        if (!$this->template) {
+        if (is_null($this->template)) {
             $this->template = $this->container->get(Environment::class);
         }
 
@@ -86,7 +82,7 @@ abstract class AbstractController
      * @param string $url
      * @return void
      */
-    public function redirect(string $url)
+    public function redirect(string $url): void
     {
         header("Location: {$url}");
         exit();

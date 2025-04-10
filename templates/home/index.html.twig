@@ -2,18 +2,20 @@
 
 {% block body %}
 
-    {% include '_header.html.twig' %}
+    <div class="col-lg-8 mx-auto my-5">
 
-    <div class="container mt-3">
+        <main class="text-center">
+            <div class="border-bottom">
+                <a href="/" class="text-body text-decoration-none">
+                    <h1 class="display-4 mb-4">Tiny Framework</h1>
+                </a>
+                <p class="lead text-muted">Minimal and Modern.</p>
+            </div>
 
-        <main>
-
-            {% include '_flash.html.twig' with {'flashes': flashes} %}
-
-            <h1 class="text-center h3">Hello World :)</h1>
-
+            <p class="small text-muted mt-3">Built with ❤️ by donchev</p>
         </main>
 
+        {% include '_flash.html.twig' with {'flashes': flashes} %}
     </div>
 
 {% endblock %}

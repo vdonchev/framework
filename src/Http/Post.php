@@ -1,61 +1,84 @@
 <?php
 
-namespace Donchev\Framework\Http;
+declare(strict_types=1);
 
-use const FILTER_CALLBACK;
+namespace Donchev\Framework\Http;
 
 class Post
 {
-    public static function getAll(bool $trim = true)
+    private array $postData;
+
+    public function __construct()
     {
-        if ($trim === true) {
-            return filter_var($_POST, FILTER_CALLBACK, ['options' => 'trim']);
+        $this->postData = filter_input_array(INPUT_POST, FILTER_UNSAFE_RAW) ?? [];
+    }
+
+    /**
+     * @param string $key
+     * @param bool $trim
+     * @return mixed
+     */
+    public function get(string $key, bool $trim = true): mixed
+    {
+        $value = $this->postData[$key] ?? null;
+
+        if ($trim && is_string($value)) {
+            return trim($value);
         }
 
-        return $_POST;
+        return $value;
     }
 
-    public static function get(string $key, bool $trim = true)
+    /**
+     * @param bool $trim
+     * @return array
+     */
+    public function getAll(bool $trim = true): array
     {
-        if (isset($_POST[$key])) {
-            if ($trim === true) {
-                return filter_var($_POST[$key], FILTER_CALLBACK, ['options' => 'trim']);
-            }
-
-            return $_POST[$key];
+        if ($trim) {
+            array_walk_recursive($this->postData, function (&$value) {
+                if (is_string($value)) {
+                    $value = trim($value);
+                }
+            });
         }
 
-        return null;
+        return $this->postData;
     }
 
-    public static function exist(string $key): bool
+    /**
+     * @return array
+     */
+    public function keys(): array
     {
-        return isset($_POST[$key]);
+        return array_keys($this->postData);
     }
 
-    public static function exists(array $keys): bool
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function has(string $key): bool
     {
-        foreach ($keys as $key) {
-            if (!isset($_POST[$key])) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_key_exists($key, $this->postData);
     }
 
-    public static function empty(string $key): bool
+    /**
+     * @param array $keys
+     * @return bool
+     */
+    public function hasAll(array $keys): bool
     {
-        return isset($_POST[$key]) && empty($_POST[$key]);
+        return empty(array_diff_key(array_flip($keys), $this->postData));
     }
 
-    public static function unset(string $key): bool
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function isEmpty(string $key): bool
     {
-        if (isset($_POST[$key])) {
-            unset($_POST[$key]);
-            return true;
-        }
-
-        return false;
+        $value = $this->postData[$key] ?? null;
+        return empty($value);
     }
 }

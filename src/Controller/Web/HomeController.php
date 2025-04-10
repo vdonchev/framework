@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Donchev\Framework\Controller\Web;
 
 use DI\DependencyException;
@@ -17,7 +19,7 @@ class HomeController extends AbstractController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function index()
+    public function index(): void
     {
         $this->renderTemplate('home/index.html.twig');
     }
